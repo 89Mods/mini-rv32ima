@@ -7,20 +7,18 @@
 	model = "riscv-minimal-nommu,qemu";
 
 	chosen {
-		/* TODO: Investigate keep_bootcon */
 		bootargs = "earlycon=uart8250,mmio,0x10000000,1000000 console=ttyS0";
-		/* stdout-path = "/soc/uart@10000000"; */
 	};
 
 	memory@80000000 {
 		device_type = "memory";
-		reg = <0x00 0x80000000 0x00 0x3ffc000>; // Leave 16kB at end for core + DTB
+		reg = <0x00 0x80000000 0x00 0x0ffc000>;
 	};
 
 	cpus {
 		#address-cells = <0x01>;
 		#size-cells = <0x00>;
-		timebase-frequency = <1000000>;
+		timebase-frequency = <0xf4240>;
 
 		cpu@0 {
 			phandle = <0x01>;
@@ -40,7 +38,9 @@
 		};
 
 		cpu-map {
+
 			cluster0 {
+
 				core0 {
 					cpu = <0x01>;
 				};
@@ -57,7 +57,123 @@
 		uart@10000000 {
 			clock-frequency = <0x1000000>;
 			reg = <0x00 0x10000000 0x00 0x100>;
-			compatible = "hvc";
+			compatible = "ns16850";
+		};
+		
+		//LEDs
+		GAISLER_GPIO@11400000 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400000 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400080 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400080 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400100 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400100 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400180 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400180 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400200 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400200 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400280 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400280 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400300 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400300 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400380 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400380 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400400 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400400 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400480 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400480 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400500 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400500 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400580 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400580 0x00 0x80>;
+			nbits = <25>;
+		};
+
+		GAISLER_GPIO@11400600 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400600 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400680 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400680 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400700 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400700 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400780 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400780 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		GAISLER_GPIO@11400800 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400800 0x00 0x80>;
+			nbits = <25>;
+		};
+		
+		//Inputs to the CPU
+		GAISLER_GPIO@11400880 {
+			compatible = "GAISLER_GPIO";
+			reg = <0x00 0x11400880 0x00 0x80>;
+			nbits = <2>;
+		};
+		
+		//RTC
+		rtc@11400900 {
+			compatible = "maxim,ds1742";
+			reg = <0x00 0x11500000 0x00 0x800>;
 		};
 
 		poweroff {
@@ -83,7 +199,7 @@
 		clint@11000000 {
 			interrupts-extended = <0x02 0x03 0x02 0x07>;
 			reg = <0x00 0x11000000 0x00 0x10000>;
-			compatible = "sifive,clint0,riscv,clint0";
+			compatible = "sifive,clint0\0riscv,clint0";
 		};
 	};
 };

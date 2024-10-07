@@ -5,11 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "default64mbdtc.h"
 
-// Just default RAM amount is 64MB.
-uint32_t ram_amt = 64*1024*1024;
+// Just default RAM amount is 16MB.
+uint32_t ram_amt = 16*1024*1024;
 int fail_on_all_faults = 0;
 
 static int64_t SimpleReadNumberInt( const char * number, int64_t defaultNumber );
@@ -170,6 +171,12 @@ restart:
 	}
 
 	CaptureKeyboardInput();
+	
+	printf("RAM AMT: %d\r\n", ram_amt);
+	//Dump RAM image
+	FILE * outfile = fopen("rv32.bin", "wb");
+	fwrite(ram_image, 1, ram_amt, outfile);
+	fclose(outfile);
 
 	// The core lives at the end of RAM.
 	core = (struct MiniRV32IMAState *)(ram_image + ram_amt - sizeof( struct MiniRV32IMAState ));
@@ -178,7 +185,7 @@ restart:
 	core->regs[11] = dtb_ptr?(dtb_ptr+MINIRV32_RAM_IMAGE_OFFSET):0; //dtb_pa (Must be valid pointer) (Should be pointer to dtb)
 	core->extraflags |= 3; // Machine-mode.
 
-	if( dtb_file_name == 0 )
+	/*if( dtb_file_name == 0 )
 	{
 		// Update system ram size in DTB (but if and only if we're using the default DTB)
 		// Warning - this will need to be updated if the skeleton DTB is ever modified.
@@ -188,7 +195,7 @@ restart:
 			uint32_t validram = dtb_ptr;
 			dtb[0x13c/4] = (validram>>24) | ((( validram >> 16 ) & 0xff) << 8 ) | (((validram>>8) & 0xff ) << 16 ) | ( ( validram & 0xff) << 24 );
 		}
-	}
+	}*/
 
 	// Image is loaded.
 	uint64_t rt;
@@ -399,7 +406,7 @@ static uint32_t HandleControlStore( uint32_t addy, uint32_t val )
 {
 	if( addy == 0x10000000 ) //UART 8250 / 16550 Data Buffer
 	{
-		printf( "%c", val );
+		putchar((uint8_t)val);
 		fflush( stdout );
 	}
 	else if( addy == 0x11004004 ) //CLNT
@@ -410,10 +417,16 @@ static uint32_t HandleControlStore( uint32_t addy, uint32_t val )
 	{
 		core->pc = core->pc + 4;
 		return val; // NOTE: PC will be PC of Syscon.
-	}
+	}//else printf("STORE %08x\n", addy);
+	/*else if(addy >= 0x11400000 && addy < 0x11400900) {
+		uint8_t port = addy >> 7;
+		uint8_t reg = addy & 0x7F;
+		uint32_t nv = val >> 8;
+		nv |= val << 24;
+		printf("GPIO %u %08x\n", reg, nv);
+	}*/
 	return 0;
 }
-
 
 static uint32_t HandleControlLoad( uint32_t addy )
 {
@@ -426,6 +439,45 @@ static uint32_t HandleControlLoad( uint32_t addy )
 		return core->timerh;
 	else if( addy == 0x1100bff8 )
 		return core->timerl;
+	else if(addy >= 0x11500000 && addy < 0x11500800) {
+		uint16_t reg = addy & 0x7FF;
+		if(reg < 0x7F8) return 0;
+		reg -= 0x7F8;
+		time_t now;
+		time(&now);
+		struct tm ts = *localtime(&now);
+		uint32_t year = ts.tm_year + 1900;
+		switch(reg) {
+			default:
+				return 0;
+			case 0:
+				//W R 10Century Century
+				year /= 100;
+				return ((year/10)<<4)|(year%10)|64;
+			case 1:
+				//OSCn 10Seconds Seconds
+				return ((ts.tm_sec/10)<<4)|(ts.tm_sec%10);
+			case 2:
+				//X 10Minutes Minutes
+				return ((ts.tm_min/10)<<4)|(ts.tm_min%10);
+			case 3:
+				//XX 10Hour Hour
+				return ((ts.tm_hour/10)<<4)|(ts.tm_hour%10);
+			case 4:
+				//BF FT X X X Day
+				return ((ts.tm_wday/10)<<4)|(ts.tm_wday%10)|128;
+			case 5:
+				//X X 10Date Date
+				return ((ts.tm_mday/10)<<4)|(ts.tm_mday%10);
+			case 6:
+				//X X X 10Month Month
+				return (((ts.tm_mon+1)/10)<<4)|((ts.tm_mon+1)%10);
+			case 7:
+				//10Year Year
+				year %= 100;
+				return ((year/10)<<4)|(year%10);
+		}
+	}
 	return 0;
 }
 
@@ -435,7 +487,7 @@ static void HandleOtherCSRWrite( uint8_t * image, uint16_t csrno, uint32_t value
 	{
 		printf( "%d", value ); fflush( stdout );
 	}
-	if( csrno == 0x137 )
+	else if( csrno == 0x137 )
 	{
 		printf( "%08x", value ); fflush( stdout );
 	}
@@ -451,13 +503,12 @@ static void HandleOtherCSRWrite( uint8_t * image, uint16_t csrno, uint32_t value
 			if( image[ptrend] == 0 ) break;
 			ptrend++;
 		}
-		if( ptrend != ptrstart )
-			fwrite( image + ptrstart, ptrend - ptrstart, 1, stdout );
+		if( ptrend != ptrstart ) fwrite( image + ptrstart, ptrend - ptrstart, 1, stdout );
 	}
 	else if( csrno == 0x139 )
 	{
 		putchar( value ); fflush( stdout );
-	}
+	}//else if(csrno != 0x140) printf("CSR WRITE %04x %08x\r\n", csrno, value);
 }
 
 static int32_t HandleOtherCSRRead( uint8_t * image, uint16_t csrno )
@@ -466,7 +517,7 @@ static int32_t HandleOtherCSRRead( uint8_t * image, uint16_t csrno )
 	{
 		if( !IsKBHit() ) return -1;
 		return ReadKBByte();
-	}
+	}//else if(csrno != 0x139) printf("CSR READ %04x\r\n", csrno);
 	return 0;
 }
 

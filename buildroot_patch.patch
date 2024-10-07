@@ -1,0 +1,297 @@
+diff --git a/package/gcc/gcc.hash b/package/gcc/gcc.hash
+index 478b0b16..7999b7d8 100644
+--- a/package/gcc/gcc.hash
++++ b/package/gcc/gcc.hash
+@@ -8,6 +8,8 @@ sha512  a5018bf1f1fa25ddf33f46e720675d261987763db48e7a5fdf4c26d3150a8abcb82fdc41
+ sha512  8fb799dfa2e5de5284edf8f821e3d40c2781e4c570f5adfdb1ca0671fcae3fb7f794ea783e80f01ec7bfbf912ca508e478bd749b2755c2c14e4055648146c204  gcc-12.3.0.tar.xz
+ # From https://gcc.gnu.org/pub/gcc/releases/gcc-13.2.0/sha512.sum
+ sha512  d99e4826a70db04504467e349e9fbaedaa5870766cda7c5cab50cdebedc4be755ebca5b789e1232a34a20be1a0b60097de9280efe47bdb71c73251e30b0862a2  gcc-13.2.0.tar.xz
++# From https://gcc.gnu.org/pub/gcc/releases/gcc-14.2.0/sha512.sum
++sha512  932bdef0cda94bacedf452ab17f103c0cb511ff2cec55e9112fc0328cbf1d803b42595728ea7b200e0a057c03e85626f937012e49a7515bc5dd256b2bf4bc396  gcc-14.2.0.tar.xz
+ 
+ # Locally calculated (fetched from Github)
+ sha512  b0853e2b1c5998044392023fa653e399e74118c46e616504ac59e1a2cf27620f94434767ce06b6cf4ca3dfb57f81d6eda92752befaf095ea5e564a9181b4659c  gcc-arc-2020.09-release.tar.gz
+diff --git a/package/uclibc/0001-aarch64-add-hwcap-header-file.patch b/package/uclibc/0001-aarch64-add-hwcap-header-file.patch
+deleted file mode 100644
+index 058e3242..00000000
+--- a/package/uclibc/0001-aarch64-add-hwcap-header-file.patch
++++ /dev/null
+@@ -1,163 +0,0 @@
+-From becd0cbc4168534e311f47dda6f67450ad0006b5 Mon Sep 17 00:00:00 2001
+-From: Waldemar Brodkorb <wbx@openadk.org>
+-Date: Tue, 8 Aug 2023 13:47:27 +0200
+-Subject: [PATCH] aarch64: add hwcap header file
+-
+-Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+-Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=becd0cbc4168534e311f47dda6f67450ad0006b5
+----
+- include/sys/auxv.h                      |  1 +
+- libc/sysdeps/linux/aarch64/bits/hwcap.h | 99 +++++++++++++++++++++++++
+- libc/sysdeps/linux/common/bits/hwcap.h  | 22 ++++++
+- 3 files changed, 122 insertions(+)
+- create mode 100644 libc/sysdeps/linux/aarch64/bits/hwcap.h
+- create mode 100644 libc/sysdeps/linux/common/bits/hwcap.h
+-
+-diff --git a/include/sys/auxv.h b/include/sys/auxv.h
+-index f35196423..b07026457 100644
+---- a/include/sys/auxv.h
+-+++ b/include/sys/auxv.h
+-@@ -20,6 +20,7 @@
+- 
+- #include <features.h>
+- #include <elf.h>
+-+#include <bits/hwcap.h>
+- 
+- __BEGIN_DECLS
+- 
+-diff --git a/libc/sysdeps/linux/aarch64/bits/hwcap.h b/libc/sysdeps/linux/aarch64/bits/hwcap.h
+-new file mode 100644
+-index 000000000..20061f5d1
+---- /dev/null
+-+++ b/libc/sysdeps/linux/aarch64/bits/hwcap.h
+-@@ -0,0 +1,99 @@
+-+/* Defines for bits in AT_HWCAP.  AArch64 Linux version.
+-+   Copyright (C) 2016-2023 Free Software Foundation, Inc.
+-+
+-+   The GNU C Library is free software; you can redistribute it and/or
+-+   modify it under the terms of the GNU Lesser General Public
+-+   License as published by the Free Software Foundation; either
+-+   version 2.1 of the License, or (at your option) any later version.
+-+
+-+   The GNU C Library is distributed in the hope that it will be useful,
+-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-+   Lesser General Public License for more details.
+-+
+-+   You should have received a copy of the GNU Lesser General Public
+-+   License along with the GNU C Library; if not, see
+-+   <https://www.gnu.org/licenses/>.  */
+-+
+-+#if !defined (_SYS_AUXV_H)
+-+# error "Never include <bits/hwcap.h> directly; use <sys/auxv.h> instead."
+-+#endif
+-+
+-+/* The following must match the kernel's <asm/hwcap.h> and update the
+-+   list together with sysdeps/unix/sysv/linux/aarch64/dl-procinfo.c.  */
+-+#define HWCAP_FP		(1 << 0)
+-+#define HWCAP_ASIMD		(1 << 1)
+-+#define HWCAP_EVTSTRM		(1 << 2)
+-+#define HWCAP_AES		(1 << 3)
+-+#define HWCAP_PMULL		(1 << 4)
+-+#define HWCAP_SHA1		(1 << 5)
+-+#define HWCAP_SHA2		(1 << 6)
+-+#define HWCAP_CRC32		(1 << 7)
+-+#define HWCAP_ATOMICS		(1 << 8)
+-+#define HWCAP_FPHP		(1 << 9)
+-+#define HWCAP_ASIMDHP		(1 << 10)
+-+#define HWCAP_CPUID		(1 << 11)
+-+#define HWCAP_ASIMDRDM		(1 << 12)
+-+#define HWCAP_JSCVT		(1 << 13)
+-+#define HWCAP_FCMA		(1 << 14)
+-+#define HWCAP_LRCPC		(1 << 15)
+-+#define HWCAP_DCPOP		(1 << 16)
+-+#define HWCAP_SHA3		(1 << 17)
+-+#define HWCAP_SM3		(1 << 18)
+-+#define HWCAP_SM4		(1 << 19)
+-+#define HWCAP_ASIMDDP		(1 << 20)
+-+#define HWCAP_SHA512		(1 << 21)
+-+#define HWCAP_SVE		(1 << 22)
+-+#define HWCAP_ASIMDFHM		(1 << 23)
+-+#define HWCAP_DIT		(1 << 24)
+-+#define HWCAP_USCAT		(1 << 25)
+-+#define HWCAP_ILRCPC		(1 << 26)
+-+#define HWCAP_FLAGM		(1 << 27)
+-+#define HWCAP_SSBS		(1 << 28)
+-+#define HWCAP_SB		(1 << 29)
+-+#define HWCAP_PACA		(1 << 30)
+-+#define HWCAP_PACG		(1UL << 31)
+-+
+-+#define HWCAP2_DCPODP		(1 << 0)
+-+#define HWCAP2_SVE2		(1 << 1)
+-+#define HWCAP2_SVEAES		(1 << 2)
+-+#define HWCAP2_SVEPMULL		(1 << 3)
+-+#define HWCAP2_SVEBITPERM	(1 << 4)
+-+#define HWCAP2_SVESHA3		(1 << 5)
+-+#define HWCAP2_SVESM4		(1 << 6)
+-+#define HWCAP2_FLAGM2		(1 << 7)
+-+#define HWCAP2_FRINT		(1 << 8)
+-+#define HWCAP2_SVEI8MM		(1 << 9)
+-+#define HWCAP2_SVEF32MM		(1 << 10)
+-+#define HWCAP2_SVEF64MM		(1 << 11)
+-+#define HWCAP2_SVEBF16		(1 << 12)
+-+#define HWCAP2_I8MM		(1 << 13)
+-+#define HWCAP2_BF16		(1 << 14)
+-+#define HWCAP2_DGH		(1 << 15)
+-+#define HWCAP2_RNG		(1 << 16)
+-+#define HWCAP2_BTI		(1 << 17)
+-+#define HWCAP2_MTE		(1 << 18)
+-+#define HWCAP2_ECV		(1 << 19)
+-+#define HWCAP2_AFP		(1 << 20)
+-+#define HWCAP2_RPRES		(1 << 21)
+-+#define HWCAP2_MTE3		(1 << 22)
+-+#define HWCAP2_SME		(1 << 23)
+-+#define HWCAP2_SME_I16I64	(1 << 24)
+-+#define HWCAP2_SME_F64F64	(1 << 25)
+-+#define HWCAP2_SME_I8I32	(1 << 26)
+-+#define HWCAP2_SME_F16F32	(1 << 27)
+-+#define HWCAP2_SME_B16F32	(1 << 28)
+-+#define HWCAP2_SME_F32F32	(1 << 29)
+-+#define HWCAP2_SME_FA64		(1 << 30)
+-+#define HWCAP2_WFXT		(1UL << 31)
+-+#define HWCAP2_EBF16		(1UL << 32)
+-+#define HWCAP2_SVE_EBF16	(1UL << 33)
+-+#define HWCAP2_CSSC		(1UL << 34)
+-+#define HWCAP2_RPRFM		(1UL << 35)
+-+#define HWCAP2_SVE2P1		(1UL << 36)
+-+#define HWCAP2_SME2		(1UL << 37)
+-+#define HWCAP2_SME2P1		(1UL << 38)
+-+#define HWCAP2_SME_I16I32	(1UL << 39)
+-+#define HWCAP2_SME_BI32I32	(1UL << 40)
+-+#define HWCAP2_SME_B16B16	(1UL << 41)
+-+#define HWCAP2_SME_F16F16	(1UL << 42)
+-diff --git a/libc/sysdeps/linux/common/bits/hwcap.h b/libc/sysdeps/linux/common/bits/hwcap.h
+-new file mode 100644
+-index 000000000..e7b899df0
+---- /dev/null
+-+++ b/libc/sysdeps/linux/common/bits/hwcap.h
+-@@ -0,0 +1,22 @@
+-+/* Defines for bits in AT_HWCAP.
+-+   Copyright (C) 2012-2023 Free Software Foundation, Inc.
+-+
+-+   The GNU C Library is free software; you can redistribute it and/or
+-+   modify it under the terms of the GNU Lesser General Public
+-+   License as published by the Free Software Foundation; either
+-+   version 2.1 of the License, or (at your option) any later version.
+-+
+-+   The GNU C Library is distributed in the hope that it will be useful,
+-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-+   Lesser General Public License for more details.
+-+
+-+   You should have received a copy of the GNU Lesser General Public
+-+   License along with the GNU C Library; if not, see
+-+   <https://www.gnu.org/licenses/>.  */
+-+
+-+#ifndef _SYS_AUXV_H
+-+# error "Never include <bits/hwcap.h> directly; use <sys/auxv.h> instead."
+-+#endif
+-+
+-+/* No bits defined for this architecture.  */
+--- 
+-2.30.2
+-
+diff --git a/package/uclibc/0002-fcntl.h-declare-f_owner_ex-for-all-architectures.patch b/package/uclibc/0002-fcntl.h-declare-f_owner_ex-for-all-architectures.patch
+deleted file mode 100644
+index da0135a5..00000000
+--- a/package/uclibc/0002-fcntl.h-declare-f_owner_ex-for-all-architectures.patch
++++ /dev/null
+@@ -1,85 +0,0 @@
+-From 98576ab8de710507419b016fbcfc82ed7c57f9c3 Mon Sep 17 00:00:00 2001
+-From: Waldemar Brodkorb <wbx@openadk.org>
+-Date: Wed, 9 Aug 2023 10:31:28 +0200
+-Subject: [PATCH] fcntl.h: declare f_owner_ex for all architectures
+-
+-Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+-Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=98576ab8de710507419b016fbcfc82ed7c57f9c3
+----
+- include/fcntl.h                         | 20 ++++++++++++++++++++
+- libc/sysdeps/linux/aarch64/bits/fcntl.h | 21 ---------------------
+- 2 files changed, 20 insertions(+), 21 deletions(-)
+-
+-diff --git a/include/fcntl.h b/include/fcntl.h
+-index 136f64d70..ce15ceaf6 100644
+---- a/include/fcntl.h
+-+++ b/include/fcntl.h
+-@@ -296,6 +296,26 @@ int name_to_handle_at(int dirfd, const char *pathname,
+- int open_by_handle_at(int mount_fd, struct file_handle *handle, int flags);
+- #endif
+- 
+-+#ifdef __USE_GNU
+-+# define F_SETOWN_EX	15	/* Get owner (thread receiving SIGIO).  */
+-+# define F_GETOWN_EX	16	/* Set owner (thread receiving SIGIO).  */
+-+/* Owner types.  */
+-+enum __pid_type
+-+  {
+-+    F_OWNER_TID = 0,		/* Kernel thread.  */
+-+    F_OWNER_PID,		/* Process.  */
+-+    F_OWNER_PGRP,		/* Process group.  */
+-+    F_OWNER_GID = F_OWNER_PGRP	/* Alternative, obsolete name.  */
+-+  };
+-+
+-+/* Structure to use with F_GETOWN_EX and F_SETOWN_EX.  */
+-+struct f_owner_ex
+-+  {
+-+    enum __pid_type type;	/* Owner type of ID.  */
+-+    __pid_t pid;		/* ID of owner.  */
+-+  };
+-+#endif
+-+
+- __END_DECLS
+- 
+- #endif /* fcntl.h  */
+-diff --git a/libc/sysdeps/linux/aarch64/bits/fcntl.h b/libc/sysdeps/linux/aarch64/bits/fcntl.h
+-index c143ba9c9..dbe929351 100644
+---- a/libc/sysdeps/linux/aarch64/bits/fcntl.h
+-+++ b/libc/sysdeps/linux/aarch64/bits/fcntl.h
+-@@ -94,8 +94,6 @@
+- #ifdef __USE_GNU
+- # define F_SETSIG	10	/* Set number of signal to be sent.  */
+- # define F_GETSIG	11	/* Get number of signal to be sent.  */
+--# define F_SETOWN_EX	15	/* Get owner (thread receiving SIGIO).  */
+--# define F_GETOWN_EX	16	/* Set owner (thread receiving SIGIO).  */
+- #endif
+- 
+- 
+-@@ -170,25 +168,6 @@ struct flock64
+-   };
+- #endif
+- 
+--
+--#ifdef __USE_GNU
+--/* Owner types.  */
+--enum __pid_type
+--  {
+--    F_OWNER_TID = 0,		/* Kernel thread.  */
+--    F_OWNER_PID,		/* Process.  */
+--    F_OWNER_PGRP,		/* Process group.  */
+--    F_OWNER_GID = F_OWNER_PGRP	/* Alternative, obsolete name.  */
+--  };
+--
+--/* Structure to use with F_GETOWN_EX and F_SETOWN_EX.  */
+--struct f_owner_ex
+--  {
+--    enum __pid_type type;	/* Owner type of ID.  */
+--    __pid_t pid;		/* ID of owner.  */
+--  };
+--#endif
+--
+- /* Define some more compatibility macros to be backward compatible with
+-    BSD systems which did not managed to hide these kernel macros.  */
+- #ifdef	__USE_BSD
+--- 
+-2.30.2
+-
+diff --git a/package/uclibc/uclibc.hash b/package/uclibc/uclibc.hash
+index 8d87c043..16c7bb90 100644
+--- a/package/uclibc/uclibc.hash
++++ b/package/uclibc/uclibc.hash
+@@ -1,4 +1,4 @@
+ # From https://downloads.uclibc-ng.org/releases/1.0.44/uClibc-ng-1.0.44.tar.xz.sha256
+-sha256  7df9d987955827382f1c2400da513456becbb6f868bdfd37737265f1cbeec994  uClibc-ng-1.0.44.tar.xz
++sha256 aed867251f4823a74ea5e3a3993d3a7c123280abe15e38dc206770c3968f21cf  uClibc-ng-1.0.50.tar.xz
+ # Locally calculated
+-sha256  6095e9ffa777dd22839f7801aa845b31c9ed07f3d6bf8a26dc5d2dec8ccc0ef3  COPYING.LIB
++sha256  ec60b993835e2c6b79e6d9226345f4e614e686eb57dc13b6420c15a33a8996e5  COPYING.LIB
+diff --git a/package/uclibc/uclibc.mk b/package/uclibc/uclibc.mk
+index 4e7d8de6..d64c7989 100644
+--- a/package/uclibc/uclibc.mk
++++ b/package/uclibc/uclibc.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-UCLIBC_VERSION = 1.0.44
++UCLIBC_VERSION = 1.0.50
+ UCLIBC_SOURCE = uClibc-ng-$(UCLIBC_VERSION).tar.xz
+ UCLIBC_SITE = https://downloads.uclibc-ng.org/releases/$(UCLIBC_VERSION)
+ UCLIBC_LICENSE = LGPL-2.1+

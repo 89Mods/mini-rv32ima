@@ -23,6 +23,8 @@
 
 # Put a getty on the serial port
 console::sysinit:echo "Welcome to mini-rv32ima Linux"
+console::sysinit:date
+console::sysinit:/root/hello_linux
 console::respawn:/bin/login -f root
 #console::respawn:/bin/getty -L -n -L console 0 vt100 # GENERIC_SERIAL
 

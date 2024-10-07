@@ -4,6 +4,7 @@ DTC:=buildroot/output/host/bin/dtc
 
 buildroot :
 	git clone https://github.com/cnlohr/buildroot --recurse-submodules --depth 1
+	cd buildroot && git apply ../buildroot_patch.patch
 
 toolchain : buildroot
 	cp -a configs/custom_kernel_config buildroot/kernel_config
@@ -50,7 +51,7 @@ test_with_qemu :
 #	make -C buildroot-2022.02.6
 
 configs/minimal.dtb : configs/minimal.dts $(DTC)
-	$(DTC) -I dts -O dtb -o $@ $< -S 2048
+	$(DTC) -I dts -O dtb -o $@ $< -S 4096
 
 # Trick for extracting the DTB from 
 dtbextract : $(DTC)

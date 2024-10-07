@@ -5,7 +5,7 @@ CC:=$(PREFIX)gcc
 OBJDUMP:=$(PREFIX)objdump
 
 # Note:  regymm says to do -fPIE -pie -static, instead of -fPIC
-CFLAGS:=-mabi=ilp32 -fPIE -pie -static -march=rv32ima -Os -s -g -ffunction-sections -fdata-sections
+CFLAGS:=-mabi=ilp32 -fPIE -pie -static -march=rv32ima -O3 -s -g -ffunction-sections -fdata-sections
 LDFLAGS:=-Wl,-elf2flt=-r -Wl,-gc-sections
 
 C_S+=hello_linux.c
