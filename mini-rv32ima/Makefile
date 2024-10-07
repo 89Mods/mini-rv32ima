@@ -64,6 +64,9 @@ default64mbdtc.h : sixtyfourmb.dtb bintoh
 sixtyfourmb.dtb : sixtyfourmb.dts
 	dtc -I dts -O dtb -o $@ $^ -S 4096
 
+compressed:
+	gcc compress-image.c
+	./a.out
 
 dumpkern :
 	../buildroot/output/host/bin/riscv32-buildroot-linux-uclibc-objdump -S ../buildroot/output/build/linux-5.18/vmlinux >fw_payload.S
