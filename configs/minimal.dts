@@ -167,7 +167,7 @@
 		GAISLER_GPIO@11400880 {
 			compatible = "GAISLER_GPIO";
 			reg = <0x00 0x11400880 0x00 0x80>;
-			nbits = <2>;
+			nbits = <8>;
 		};
 		
 		//RTC
