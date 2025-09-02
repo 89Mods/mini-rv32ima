@@ -249,9 +249,9 @@ int main(int argc, char ** argv) {
 			if(curr_sat == 255 || curr_sat == 128) sat_dir = !sat_dir;
 			if(curr_sat == 255) sat_cooldown = 500;
 		}else sat_cooldown--;
-		if((loop_ctr % 1000) == 0) {
+		/*if((loop_ctr % 1000) == 0) {
 			printf("%u loops\r\n", loop_ctr);
-		}
+		}*/
 	}
 	
 	deinit_leds();
