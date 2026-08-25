@@ -191,7 +191,7 @@ void the_colors(uint8_t delay) {
 	}
 	leds_sync();
 	pet_watchdog();
-	if(delay) delay_ms(3333);	
+	if(delay) delay_ms(3333);
 }
 
 int main(int argc, char ** argv) {
