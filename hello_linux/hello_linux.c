@@ -183,6 +183,8 @@ uint32_t hsv_to_rgb(float h, float s, float v){
 }
 
 void the_colors(uint8_t delay) {
+	for(int i = 0; i < NUM_LEDS; i++) set_led_color(i, 0);
+	leds_sync();
 	for(int i = 0; i < NUM_LEDS; i++) {
 		if(i >= EFLED_EFBAR_OFFSET && i < EFLED_EFBAR_OFFSET + EFLED_EFBAR_NUM) {
 			if((i & 1) == 0) set_led_color(i, 0x29d1ff);
