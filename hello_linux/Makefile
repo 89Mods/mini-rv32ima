@@ -17,7 +17,7 @@ test : deploy
 
 hello_linux : hello_linux.c
 	$(CC) $(CFLAGS) $(C_S) $(LDFLAGS) -o $@
-	$(OBJDUMP) -S $@.gdb > $@.S
+	#$(OBJDUMP) -S $@.gdb > $@.S
 
 pi : pi.c
 	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
@@ -26,7 +26,7 @@ deploy : hello_linux pi
 	cp $^ ../buildroot/output/target/root
 
 rebuild :
-	make -C.. toolchain 
+	make -C.. toolchain
 
 clean :
 	rm -rf hello_linux hello_linux.gdb hello_linux.S pi pi.gdb pi.S

@@ -20,13 +20,13 @@ C_S+=$(APPFOLDER)/core_util.c
 
 $(EXE) : $(APPFOLDER)
 	$(CC) $(C_S) $(CFLAGS) -DFLAGS_STR="\"$(CFLAGS)\"" $(LDFLAGS) -o $@
-	$(OBJDUMP) -S $@.gdb > $@.S
+	#$(OBJDUMP) -S $@.gdb > $@.S
 
 deploy : $(EXE)
 	cp $^ ../../buildroot/output/target/root
 
 rebuild : deploy
-	make -C../.. toolchain 
+	make -C../.. toolchain
 
 # sudo apt-get install node node-js-yaml node-yamlish python-yaml
 

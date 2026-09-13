@@ -33,19 +33,15 @@ profile : Image.ProfileTest
 	make clean all && cp mini-rv32ima.flt ../buildroot/output/target/root/ && make -C .. toolchain && ./mini-rv32ima -f ../buildroot/output/images/Image -plt 4 -m 0x6000000
 	echo "Be sure to record the immediately above value."
 
+Image.ProfileTest :
+	wget https://github.com/cnlohr/mini-rv32ima-images/raw/master/images/Image.ProfileTest-linux-5.18.0-rv32nommu.zip
+	unzip Image.ProfileTest-linux-5.18.0-rv32nommu.zip
+
 testkern : mini-rv32ima
 	./mini-rv32ima -f ../buildroot/output/images/Image -k "console=hvc0"
 
 testbare : mini-rv32ima
 	./mini-rv32ima -f ../baremetal/baremetal.bin
-
-DownloadedImage :
-	wget https://github.com/cnlohr/mini-rv32ima-images/raw/master/images/linux-6.1.14-rv32nommu-cnl-1.zip -O linux-6.1.14-rv32nommu-cnl-1.zip
-	unzip linux-6.1.14-rv32nommu-cnl-1.zip
-	mv Image DownloadedImage
-
-testdlimage : mini-rv32ima DownloadedImage
-	./mini-rv32ima -f DownloadedImage
 
 # For dumping specific binaries and info.
 # SBI is not currently working

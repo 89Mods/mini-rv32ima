@@ -19,13 +19,13 @@ CFLAGS+=-DDUK_CMDLINE_CONSOLE_SUPPORT -I$(DUKTAPEVER)/extras/console
 
 $(EXE) : $(DUKTAPEVER)
 	$(CC) $(C_S) $(CFLAGS) $(LDFLAGS) -o $@
-	$(OBJDUMP) -S $@.gdb > $@.S
+	#$(OBJDUMP) -S $@.gdb > $@.S
 
 deploy : $(EXE) fizzbuzz.js
 	cp $^ ../../buildroot/output/target/root
 
 rebuild : deploy
-	make -C../.. toolchain 
+	make -C../.. toolchain
 
 # sudo apt-get install node node-js-yaml node-yamlish python-yaml
 
